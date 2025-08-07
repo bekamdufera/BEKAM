@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BORCELLE RESTO - Interactive Menu</title>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+        
+        .restaurant-name {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .menu-title {
+            color: #FFA500;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .menu-description {
+            color: #ccc;
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+        
+        /* Food Showcase */
+        .showcase-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 4rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .showcase-item {
+            position: relative;
+            border-radius: 50%;
+            border: 4px solid white;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .showcase-item.medium {
+            width: 12rem;
+            height: 12rem;
+        }
+        
+        .showcase-item.small {
+            width: 10rem;
+            height: 10rem;
+        }
+        
+        .showcase-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .showcase-label {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        /* Search and Categories */
+        .menu-controls {
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            padding: 0 1rem;
+        }
+        
+        .search-bar {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: #333;
+            color: white;
+            border: none;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+        
+        .search-bar:focus {
+            outline: 2px solid #FFA500;
+        }
+        
+        .categories {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+        
+        .category-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            white-space: nowrap;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .category-btn.active {
+            background-color: #FFA500;
+            color: black;
+        }
+        
+        .category-btn.inactive {
+            background-color: #333;
+            color: white;
+        }
+        
+        /* Menu Grid */
+        .menu-grid {
+            max-width: 1200px;
+            margin: 0 auto 5rem;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .menu-card {
+            background-color: #222;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 165, 0, 0.2);
+        }
+        
+        .menu-card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .menu-card-content {
+            padding: 1.5rem;
+        }
+        
+        .menu-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+        
+        .menu-card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        
+        .menu-card-price {
+            color: #FFA500;
+            font-weight: bold;
+        }
+        
+        .menu-card-desc {
+            color: #aaa;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: #222;
+            padding: 3rem 1rem;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .contact-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .contact-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .contact-link:hover {
+            color: #FFA500;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background-color: #222;
+            border-radius: 0.75rem;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        
+        .modal-close:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .modal-price {
+            color: #FFA500;
+            font-size: 1.75rem;
+            font-weight: bold;
+        }
+        
+        .modal-description {
+            color: #ccc;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .nutrition-info {
+            background-color: #333;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .nutrition-title {
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .nutrition-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        
+        .nutrition-item {
+            color: #aaa;
+        }
+        
+        .nutrition-value {
+            color: white;
+            font-weight: bold;
+            margin-top: 0.25rem;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .modal-btn.primary {
+            background-color: #FFA500;
+            color: black;
+        }
+        
+        .modal-btn.secondary {
+            background-color: #444;
+            color: white;
+        }
+        
+        .modal-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .restaurant-name {
+                font-size: 2rem;
+            }
+            
+            .menu-title {
+                font-size: 2rem;
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header" id="header">
+        <div class="logo">🍴</div>
+        <h1 class="restaurant-name">BORCELLE RESTO</h1>
+        <h2 class="menu-title">FOOD MENU</h2>
+        <p class="menu-description">The following is a list of the foods available in our restaurant.</p>
+    </header>
+    
+    <!-- Food Showcase -->
+    <div class="showcase-container" id="showcase">
+        <div class="showcase-item small" data-category="pasta">
+            <img src="https://bing.com/th?id=OSK.6904cf622b026db39804a90ae3880db0" alt="Pasta">
+            <div class="showcase-label">Pasta</div>
+        </div>
+        <div class="showcase-item medium" data-category="burger">
+            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Burger">
+            <div class="showcase-label">Burger</div>
+        </div>
+        <div class="showcase-item small" data-category="pizza">
+            <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Pizza">
+            <div class="showcase-label">Pizza</div>
+        </div>
+    </div>
+    
+    <!-- Menu Controls -->
+    <div class="menu-controls">
+        <input type="text" class="search-bar" placeholder="Search menu items..." id="searchInput">
+        <div class="categories" id="categories">
+            <button class="category-btn active" data-category="all">All Items</button>
+            <button class="category-btn inactive" data-category="pasta">Pasta</button>
+            <button class="category-btn inactive" data-category="burger">Burgers</button>
+            <button class="category-btn inactive" data-category="pizza">Pizza</button>
+            <button class="category-btn inactive" data-category="sides">Sides</button>
+            <button class="category-btn inactive" data-category="drinks">Drinks</button>
+        </div>
+    </div>
+    
+    <!-- Menu Grid -->
+    <div class="menu-grid" id="menuGrid">
+        <!-- Items will be dynamically inserted here -->
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">BORCELLE RESTO</div>
+            <div class="contact-links">
+                <a href="tel:+15551234567" class="contact-link">
+                    <span>📞</span>
+                    <span>+1 (555) 123-4567</span>
+                </a>
+                <a href="https://borcelleresto.com" target="_blank" class="contact-link">
+                    <span>🌐</span>
+                    <span>www.borcelleresto.com</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" style="display: none;">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">✕</button>
+            <img src="" alt="Menu Item" class="modal-image" id="modalImage">
+            <div class="modal-body">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modalTitle">Item Name</h3>
+                    <div class="modal-price" id="modalPrice">$0.00</div>
+                </div>
+                <p class="modal-description" id="modalDescription">Item description will appear here.</p>
+                
+                <div class="nutrition-info">
+                    <h4 class="nutrition-title">Nutrition Information</h4>
+                    <div class="nutrition-grid">
+                        <div class="nutrition-item">
+                            <div>Calories</div>
+                            <div class="nutrition-value" id="nutritionCalories">0</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div>Protein</div>
+                            <div class="nutrition-value" id="nutritionProtein">0g</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div>Carbs</div>
+                            <div class="nutrition-value" id="nutritionCarbs">0g</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div>Fat</div>
+                            <div class="nutrition-value" id="nutritionFat">0g</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div>Sodium</div>
+                            <div class="nutrition-value" id="nutritionSodium">0mg</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div>Sugar</div>
+                            <div class="nutrition-value" id="nutritionSugar">0g</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="modal-btn primary" id="addToOrder">Add to Order</button>
+                    <button class="modal-btn secondary" id="customizeItem">Customize</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Menu Data
+        const menuData = {
+            categories: [
+                {
+                    id: "pasta",
+                    title: "Pasta",
+                    items: [
+                        {
+                            id: "p1",
+                            name: "Special Pasta",
+                            price: 8.99,
+                            description: "Handmade pasta with truffle oil, wild mushrooms, and parmesan cheese.",
+                            image: "https://bing.com/th?id=OSK.6904cf622b026db39804a90ae3880db0",
+                            nutrition: {
+                                calories: 650,
+                                protein: "22g",
+                                carbs: "85g",
+                                fat: "25g",
+                                sodium: "1200mg",
+                                sugar: "8g"
+                            }
+                        },
+                        {
+                            id: "p2",
+                            name: "Creamy Alfredo",
+                            price: 7.99,
+                            description: "Fettuccine pasta with rich alfredo sauce and garlic bread crumbs.",
+                            image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                            nutrition: {
+                                calories: 720,
+                                protein: "18g",
+                                carbs: "78g",
+                                fat: "32g",
+                                sodium: "950mg",
+                                sugar: "5g"
+                            }
+                        }
+                    ]
+                },
+                {
+                    id: "burger",
+                    title: "Burgers",
+                    items: [
+                        {
+                            id: "b1",
+                            name: "Spicy Burger",
+                            price: 6.99,
+                            description: "Juicy beef patty with spicy sauce, jalapeños, and pepper jack cheese.",
+                            image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                            nutrition: {
+                                calories: 780,
+                                protein: "32g",
+                                carbs: "45g",
+                                fat: "42g",
+                                sodium: "1100mg",
+                                sugar: "10g"
+                            }
+                        },
+                        {
+                            id: "b2",
+                            name: "Classic Cheeseburger",
+                            price: 5.99,
+                            description: "Beef patty with American cheese, lettuce, tomato, and special sauce.",
+                            image: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                            nutrition: {
+                                calories: 650,
+                                protein: "28g",
+                                carbs: "38g",
+                                fat: "35g",
+                                sodium: "850mg",
+                                sugar: "7g"
+                            }
+                        }
+                    ]
+                },
+                {
+                    id: "pizza",
+                    title: "Pizza",
+                    items: [
+                        {
+                            id: "pz1",
+                            name: "Pepperoni Pizza",
+                            price: 10.99,
+                            description: "Classic pizza with tomato sauce, mozzarella, and pepperoni.",
+                            image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                            nutrition: {
+                                calories: 950,
+                                protein: "35g",
+                                carbs: "110g",
+                                fat: "40g",
+                                sodium: "1800mg",
+                                sugar: "12g"
+                            }
+                        },
+                        {
+                            id: "pz2",
+                            name: "Margherita Pizza",
+                            price: 9.99,
+                            description: "Tomato sauce, fresh mozzarella, basil, and olive oil.",
+                            image: "https://images.unsplash.com/photo-1595854341625-f33ee10dbf94?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                            nutrition: {
+                                calories: 850,
+                                protein: "30g",
+                                carbs: "95g",
+                                fat: "35g",
+                                sodium: "1500mg",
+                                sugar: "8g"
+                            }
+                        }
+                    ]
+                },
+                {
+                    id: "sides",
+                    title: "Sides",
+                    items: [
+                        {
+                            id: "s1",
+                            name: "Garlic Bread",
+                            price: 3.99,
+                            description: "Freshly baked bread with garlic butter and parsley.",
+                            image: "https://bing.com/th?id=OSK.77d6b9a9f8d18c7b8b7566fcfb11e902",
+                            nutrition: {
+                                calories: 320,
+                                protein: "8g",
+                                carbs: "45g",
+                                fat: "12g",
+                                sodium: "600mg",
+                                sugar: "3g"
+                            }
+                        },
+                        {
+                            id: "s2",
+                            name: "French Fries",
+                            price: 2.99,
+                            description: "Crispy golden fries with sea salt.",
+                            image: "https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                            nutrition: {
+                                calories: 380,
+                                protein: "5g",
+                                carbs: "50g",
+                                fat: "18g",
+                                sodium: "450mg",
+                                sugar: "0g"
+                            }
+                        }
+                    ]
+                },
+                {
+                    id: "drinks",
+                    title: "Drinks",
+                    items: [
+                        {
+                            id: "d1",
+                            name: "Lemonade",
+                            price: 2.99,
+                            description: "Freshly squeezed lemonade with mint.",
+                            image: "https://bing.com/th?id=OSK.1e97c8293be6b518512c7dd90b822273",
+                            nutrition: {
+                                calories: 120,
+                                protein: "0g",
+                                carbs: "32g",
+                                fat: "0g",
+                                sodium: "10mg",
+                                sugar: "30g"
+                            }
+                        },
+                        {
+                            id: "d2",
+                            name: "Iced Tea",
+                            price: 1.99,
+                            description: "Fresh brewed iced tea with lemon.",
+                            image: "https://images.unsplash.com/photo-1558160074-4d7d8bdf4256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                            nutrition: {
+                                calories: 5,
+                                protein: "0g",
+                                carbs: "1g",
+                                fat: "0g",
+                                sodium: "5mg",
+                                sugar: "0g"
+                            }
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // DOM Elements
+        const menuGrid = document.getElementById('menuGrid');
+        const searchInput = document.getElementById('searchInput');
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        const showcaseItems = document.querySelectorAll('.showcase-item');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalClose = document.getElementById('modalClose');
+        const modalImage = document.getElementById('modalImage');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalPrice = document.getElementById('modalPrice');
+        const modalDescription = document.getElementById('modalDescription');
+        const addToOrderBtn = document.getElementById('addToOrder');
+        const customizeItemBtn = document.getElementById('customizeItem');
+
+        // Current state
+        let currentCategory = 'all';
+        let currentSearch = '';
+        let currentModalItem = null;
+
+        // Initialize the menu
+        function initMenu() {
+            renderMenuItems();
+            setupEventListeners();
+            animateElements();
+        }
+
+        // Render menu items based on current filters
+        function renderMenuItems() {
+            menuGrid.innerHTML = '';
+            
+            // Get all items from all categories
+            let allItems = [];
+            menuData.categories.forEach(category => {
+                allItems = allItems.concat(category.items.map(item => ({
+                    ...item,
+                    category: category.id
+                })));
+            });
+            
+            // Filter by category
+            let filteredItems = allItems;
+            if (currentCategory !== 'all') {
+                filteredItems = filteredItems.filter(item => item.category === currentCategory);
+            }
+            
+            // Filter by search
+            if (currentSearch) {
+                const searchTerm = currentSearch.toLowerCase();
+                filteredItems = filteredItems.filter(item => 
+                    item.name.toLowerCase().includes(searchTerm) || 
+                    item.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Render items
+            filteredItems.forEach(item => {
+                const menuItem = document.createElement('div');
+                menuItem.className = 'menu-card';
+                menuItem.dataset.id = item.id;
+                menuItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="menu-card-image">
+                    <div class="menu-card-content">
+                        <div class="menu-card-header">
+                            <h3 class="menu-card-title">${item.name}</h3>
+                            <div class="menu-card-price">$${item.price.toFixed(2)}</div>
+                        </div>
+                        <p class="menu-card-desc">${item.description}</p>
+                    </div>
+                `;
+                menuItem.addEventListener('click', () => openModal(item));
+                menuGrid.appendChild(menuItem);
+            });
+            
+            // Animate new items
+            animateMenuItems();
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Search input
+            searchInput.addEventListener('input', (e) => {
+                currentSearch = e.target.value;
+                renderMenuItems();
+            });
+            
+            // Category buttons
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    currentCategory = button.dataset.category;
+                    categoryButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        btn.classList.add('inactive');
+                    });
+                    button.classList.add('active');
+                    button.classList.remove('inactive');
+                    renderMenuItems();
+                });
+            });
+            
+            // Showcase items
+            showcaseItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const category = item.dataset.category;
+                    currentCategory = category;
+                    categoryButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        btn.classList.add('inactive');
+                        if (btn.dataset.category === category) {
+                            btn.classList.add('active');
+                            btn.classList.remove('inactive');
+                        }
+                    });
+                    renderMenuItems();
+                });
+            });
+            
+            // Modal close
+            modalClose.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) {
+                    closeModal();
+                }
+            });
+            
+            // Order buttons
+            addToOrderBtn.addEventListener('click', () => {
+                alert(`Added ${currentModalItem.name} to your order!`);
+                closeModal();
+            });
+            
+            customizeItemBtn.addEventListener('click', () => {
+                alert(`Customizing ${currentModalItem.name}...`);
+            });
+        }
+
+        // Open modal with item details
+        function openModal(item) {
+            currentModalItem = item;
+            modalImage.src = item.image;
+            modalImage.alt = item.name;
+            modalTitle.textContent = item.name;
+            modalPrice.textContent = `$${item.price.toFixed(2)}`;
+            modalDescription.textContent = item.description;
+            
+            // Set nutrition info
+            document.getElementById('nutritionCalories').textContent = item.nutrition.calories;
+            document.getElementById('nutritionProtein').textContent = item.nutrition.protein;
+            document.getElementById('nutritionCarbs').textContent = item.nutrition.carbs;
+            document.getElementById('nutritionFat').textContent = item.nutrition.fat;
+            document.getElementById('nutritionSodium').textContent = item.nutrition.sodium;
+            document.getElementById('nutritionSugar').textContent = item.nutrition.sugar;
+            
+            modalOverlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close modal
+        function closeModal() {
+            modalOverlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Animate elements on page load
+        function animateElements() {
+            const header = document.getElementById('header');
+            const showcase = document.getElementById('showcase');
+            
+            // Header animation
+            header.style.animation = 'fadeIn 1s ease-out forwards';
+            
+            // Showcase animation
+            showcase.style.animation = 'fadeIn 1s ease-out 0.3s forwards';
+            showcase.style.opacity = '0';
+        }
+
+        // Animate menu items
+        function animateMenuItems() {
+            const items = document.querySelectorAll('.menu-card');
+            items.forEach((item, index) => {
+                item.style.animation = `bounceIn 0.5s ease-out ${index * 0.1}s forwards`;
+                item.style.opacity = '0';
+            });
+        }
+
+        // Initialize the menu when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initMenu);
+    </script>
+</body>
+</html>
